@@ -1,0 +1,662 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>RISE Center | Intelligent Systems</title>
+
+    <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.2/dist/mindar-image-aframe.prod.js"></script>
+
+    <script>
+      // --- DATA RUANGAN ---
+      const roomData = {
+        "Lab MULMED": {
+          title: "Lab Multimedia",
+          desc: "Studio kreatif untuk produksi konten digital, editing video profesional, desain grafis, dan pengembangan multimedia interaktif.",
+          features: ["Video Production", "Graphic Design", "3D Modeling", "Audio Engineering"],
+          capacity: "40 mahasiswa",
+          facilities: ["30 Workstation High-End", "Green Screen Studio", "Professional Camera Kit", "Audio Recording Booth"],
+          color: "#8b5cf6",
+        },
+        "Lab CSN": {
+          title: "Lab Computer System & Network",
+          desc: "Pusat eksplorasi infrastruktur jaringan, keamanan siber, dan komputasi awan untuk mencetak insinyur jaringan andal.",
+          features: ["Network Security", "Cloud Computing", "System Administration", "Cybersecurity"],
+          capacity: "35 mahasiswa",
+          facilities: ["Cisco Router & Switch", "Network Simulator", "Server Rack", "Security Tools"],
+          color: "#3b82f6",
+        },
+        "Lab GIT": {
+          title: "Lab Game & Interactive Tech",
+          desc: "Inkubator pengembangan game dan realitas virtual (VR/AR) dengan teknologi rendering terkini.",
+          features: ["Game Development", "VR/AR Creation", "Unity & Unreal Engine", "Mobile Gaming"],
+          capacity: "30 mahasiswa",
+          facilities: ["Gaming PC", "VR Headset", "Game Console", "Motion Capture"],
+          color: "#ec4899",
+        },
+        "IT Mart": {
+          title: "IT Mart & Merchandise",
+          desc: "One-stop solution untuk kebutuhan mahasiswa, merchandise eksklusif jurusan, serta logistik ringan.",
+          features: ["Student Store", "Merchandise", "Snacks & Drinks", "Stationary"],
+          capacity: "Public Area",
+          facilities: ["Vending Machine", "Cashier", "Display Area", "Copy Center"],
+          color: "#ef4444",
+        },
+        "Lab SE": {
+          title: "Lab Software Engineering",
+          desc: "Ruang kolaborasi pengembangan perangkat lunak berskala industri dengan metodologi Agile dan DevOps.",
+          features: ["Agile Development", "DevOps", "Quality Assurance", "Project Management"],
+          capacity: "40 mahasiswa",
+          facilities: ["Development Workstation", "Git Server", "CI/CD Pipeline", "Testing Tools"],
+          color: "#10b981",
+        },
+        "TU Lab": {
+          title: "Tata Usaha Laboratorium",
+          desc: "Sentral pelayanan administrasi praktikum, peminjaman inventaris, dan layanan akademik laboratorium.",
+          features: ["Administration", "Equipment Rental", "Scheduling", "Student Services"],
+          capacity: "Staff Only",
+          facilities: ["Admin Desk", "Archive Room", "Printer & Scanner", "Service Counter"],
+          color: "#f59e0b",
+        },
+        "Lab KERIS": {
+          title: "Lab Kecerdasan & Riset Sistem",
+          desc: "Pusat riset tingkat lanjut untuk Kecerdasan Buatan (AI), Big Data, dan Machine Learning.",
+          features: ["Artificial Intelligence", "Machine Learning", "Deep Learning", "Big Data"],
+          capacity: "25 mahasiswa",
+          facilities: ["GPU Workstation", "Data Server", "Research Tools", "ML Framework"],
+          color: "#06b6d4",
+        },
+        "Lab Besar": {
+          title: "Lab Besar (Multipurpose)",
+          desc: "Auditorium teknis multifungsi untuk praktikum massal, seminar teknologi, dan workshop.",
+          features: ["Mass Practicum", "Workshop Space", "Seminar Venue", "Flexible Layout"],
+          capacity: "100+ mahasiswa",
+          facilities: ["100+ Workstation", "Projector & Screen", "Sound System", "Modular Furniture"],
+          color: "#a855f7",
+        },
+        "R. Rapat": {
+          title: "Ruang Rapat",
+          desc: "Ruang diskusi strategis dan presentasi proyek dengan fasilitas telekonferensi modern.",
+          features: ["Meeting Space", "Video Conference", "Discussion"],
+          capacity: "20 orang",
+          facilities: ["Conference Table", "Smart TV", "Whiteboard"],
+          color: "#64748b",
+        },
+      };
+
+      // LOGIC KLIK
+      AFRAME.registerComponent("click-handler", {
+        init: function () {
+          var el = this.el;
+
+          el.addEventListener("mouseenter", function () {
+            if (el.classList.contains("clickable")) {
+              document.body.style.cursor = "pointer";
+            }
+          });
+
+          el.addEventListener("mouseleave", function () {
+            document.body.style.cursor = "default";
+          });
+
+          el.addEventListener("click", function (evt) {
+            if (!el.classList.contains("clickable")) return;
+
+            var roomKey = el.getAttribute("data-room");
+            if (roomData[roomKey]) {
+              showRoomDetail(roomData[roomKey]);
+            }
+          });
+        },
+      });
+
+      function showRoomDetail(data) {
+        document.getElementById("detail-title").innerText = data.title;
+        document.getElementById("detail-desc").innerText = data.desc;
+        document.getElementById("detail-capacity").innerText = data.capacity;
+
+        const featuresList = document.getElementById("features-list");
+        featuresList.innerHTML = data.features.map((f) => `<div class="feature-tag">${f}</div>`).join("");
+
+        const facilitiesList = document.getElementById("facilities-list");
+        facilitiesList.innerHTML = data.facilities.map((f) => `<li>${f}</li>`).join("");
+
+        document.getElementById("info-detail").style.setProperty("--accent-color", data.color);
+
+        const panel = document.getElementById("info-detail");
+        panel.classList.add("active");
+        setTimeout(() => panel.classList.add("loaded"), 100);
+      }
+    </script>
+
+    <style>
+      :root {
+        --accent-color: #3b82f6;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        background: transparent !important;
+        font-family: "Inter", sans-serif;
+      }
+
+      video {
+        position: fixed !important;
+        top: 0 !important;
+        left: 0 !important;
+        width: 100vw !important;
+        height: 100vh !important;
+        object-fit: cover !important;
+        z-index: -1 !important;
+      }
+      .a-canvas {
+        position: fixed !important;
+        top: 0 !important;
+        left: 0 !important;
+        width: 100vw !important;
+        height: 100vh !important;
+        z-index: 1 !important;
+        pointer-events: auto !important;
+      }
+
+      /* === LANDING PAGE (LAYOUT FIXED) === */
+      #landing-page {
+        position: fixed;
+        inset: 0;
+        z-index: 999;
+        background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center; /* Memastikan teks rata tengah */
+        color: white;
+        padding: 30px;
+      }
+
+      .logo-wrapper {
+        margin-bottom: 40px;
+        max-width: 600px;
+        animation: fadeInUp 0.8s ease-out;
+      }
+
+      .logo-wrapper h1 {
+        font-size: clamp(3rem, 10vw, 5rem);
+        margin: 0 0 10px 0;
+        font-weight: 900;
+        letter-spacing: -2px;
+        line-height: 1;
+        text-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+      }
+
+      .tagline-main {
+        font-size: clamp(1.2rem, 4vw, 1.8rem);
+        font-weight: 700;
+        margin-bottom: 10px;
+        color: #e0e7ff;
+      }
+
+      .tagline-sub {
+        font-size: clamp(0.9rem, 3vw, 1.1rem);
+        font-weight: 300;
+        opacity: 0.9;
+        line-height: 1.5;
+      }
+
+      .btn-start {
+        padding: 20px 50px;
+        border-radius: 50px;
+        background: white;
+        color: #4f46e5;
+        border: none;
+        font-weight: 800;
+        font-size: 1.1rem;
+        cursor: pointer;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        transition:
+          transform 0.2s,
+          box-shadow 0.2s;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        animation: fadeInUp 0.8s ease-out 0.3s backwards;
+      }
+      .btn-start:active {
+        transform: scale(0.95);
+      }
+
+      @keyframes fadeInUp {
+        from {
+          opacity: 0;
+          transform: translateY(30px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      /* SCAN OVERLAY */
+      #scan-overlay {
+        position: fixed;
+        inset: 0;
+        z-index: 5;
+        display: none;
+        pointer-events: none;
+        background: transparent;
+      }
+      .scan-guide {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: min(65vw, 380px);
+        height: min(65vw, 380px);
+        border: 4px solid rgba(59, 130, 246, 0.9);
+        border-radius: 30px;
+        animation: pulse 2s infinite;
+      }
+      .scan-text {
+        position: absolute;
+        bottom: 10%;
+        width: 100%;
+        text-align: center;
+        color: white;
+        font-weight: 700;
+        font-size: 1.2rem;
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
+      }
+      @keyframes pulse {
+        0%,
+        100% {
+          transform: translate(-50%, -50%) scale(1);
+        }
+        50% {
+          transform: translate(-50%, -50%) scale(1.05);
+        }
+      }
+
+      /* === CONTROLS CONTAINER (POSISI) === */
+      #controls-container {
+        position: fixed;
+        /* POSISI AWAL (KANAN) */
+        right: 20px;
+        left: auto;
+
+        top: 50%;
+        transform: translateY(-50%);
+        display: none; /* Hidden until start */
+        flex-direction: column;
+        gap: 25px;
+        z-index: 600;
+        pointer-events: none;
+        transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); /* Animasi smooth */
+      }
+
+      /* KETIKA PANEL TERBUKA -> PINDAH KE KIRI (PERBAIKAN UTAMA) */
+      #controls-container.panel-open {
+        right: auto !important; /* Reset right */
+        left: 20px !important; /* Paksa ke kiri */
+      }
+
+      .control-group {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        align-items: center;
+      }
+
+      .btn-control {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        border: 2px solid rgba(255, 255, 255, 0.8);
+        background: rgba(15, 23, 42, 0.6);
+        backdrop-filter: blur(12px);
+        color: white;
+        font-weight: 800;
+        font-size: 1.2rem;
+        cursor: pointer;
+        pointer-events: auto;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition:
+          transform 0.2s,
+          background 0.3s;
+        user-select: none;
+        -webkit-tap-highlight-color: transparent;
+      }
+      .btn-control:active {
+        transform: scale(0.9);
+      }
+
+      .btn-floor.active {
+        background: #3b82f6;
+        border-color: white;
+        transform: scale(1.15);
+        box-shadow: 0 0 20px rgba(59, 130, 246, 0.6);
+      }
+
+      .btn-zoom {
+        font-size: 1.6rem;
+      }
+
+      /* INFO DETAIL PANEL */
+      #info-detail {
+        position: fixed;
+        bottom: -100%;
+        left: 0;
+        right: 0;
+        background: linear-gradient(to bottom, rgba(15, 23, 42, 0.98), rgba(0, 0, 0, 0.98));
+        backdrop-filter: blur(20px);
+        color: white;
+        z-index: 700;
+        transition:
+          bottom 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+          right 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        pointer-events: auto;
+        max-height: 90vh;
+        border-radius: 30px 30px 0 0;
+        box-shadow: 0 -10px 50px rgba(0, 0, 0, 0.5);
+      }
+      #info-detail.active {
+        bottom: 0;
+      }
+      #info-detail.expanded {
+        bottom: 0 !important;
+        max-height: 95vh;
+      }
+
+      @media (min-width: 768px) {
+        #info-detail {
+          left: auto;
+          right: -500px;
+          top: 0;
+          bottom: 0;
+          width: 450px;
+          height: 100vh;
+          max-height: 100vh;
+          border-radius: 0;
+        }
+        #info-detail.active {
+          right: 0;
+          bottom: 0;
+        }
+        .drag-indicator {
+          display: none;
+        }
+        .detail-content {
+          max-height: calc(100vh - 140px);
+        }
+
+        /* Desktop juga pindah ke kiri */
+        #controls-container.panel-open {
+          right: auto !important;
+          left: 30px !important;
+        }
+      }
+
+      .detail-header {
+        padding: 20px 25px 15px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        position: relative;
+      }
+      .close-btn {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        background: rgba(255, 255, 255, 0.1);
+        border: none;
+        color: white;
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        font-size: 1.5rem;
+        cursor: pointer;
+      }
+      #detail-title {
+        font-size: 1.8rem;
+        font-weight: 800;
+        margin: 0 50px 10px 0;
+        color: var(--accent-color);
+      }
+      .detail-content {
+        padding: 25px;
+        overflow-y: auto;
+        max-height: calc(90vh - 140px);
+      }
+      .info-section {
+        margin-bottom: 25px;
+      }
+      .info-label {
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        opacity: 0.6;
+        margin-bottom: 8px;
+        font-weight: 700;
+      }
+      .feature-tag {
+        background: rgba(59, 130, 246, 0.2);
+        border: 1px solid rgba(59, 130, 246, 0.4);
+        padding: 8px 16px;
+        border-radius: 20px;
+        font-size: 0.85rem;
+        display: inline-block;
+        margin: 3px;
+      }
+      #facilities-list li {
+        padding: 12px 0;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        position: relative;
+        padding-left: 25px;
+        list-style: none;
+      }
+      #facilities-list li::before {
+        content: "✓";
+        position: absolute;
+        left: 0;
+        color: var(--accent-color);
+        font-weight: bold;
+      }
+      .drag-indicator {
+        width: 40px;
+        height: 5px;
+        background: rgba(255, 255, 255, 0.3);
+        border-radius: 10px;
+        margin: 0 auto 15px;
+        cursor: grab;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div id="landing-page">
+      <div class="logo-wrapper">
+        <h1>RISE CENTER</h1>
+        <div class="tagline-main">Beyond Reality, Into Innovation</div>
+        <div class="tagline-sub">Research & Innovation in Smart Engineering<br />Jelajahi Fasilitas Laboratorium Tercanggih Kami</div>
+      </div>
+      <button class="btn-start" onclick="startAR()">🚀 JELAJAHI SEKARANG</button>
+    </div>
+
+    <div id="scan-overlay">
+      <div class="scan-guide"></div>
+      <p class="scan-text">📱 ARAHKAN KAMERA KE LOGO</p>
+    </div>
+
+    <div id="controls-container">
+      <div class="control-group">
+        <button class="btn-control btn-floor" id="btn-L2" onclick="switchFloor(2)">L2</button>
+        <button class="btn-control btn-floor active" id="btn-L1" onclick="switchFloor(1)">L1</button>
+      </div>
+
+      <div class="control-group">
+        <button class="btn-control btn-zoom" onclick="changeZoom(0.2)">+</button>
+        <button class="btn-control btn-zoom" onclick="changeZoom(-0.2)">−</button>
+      </div>
+    </div>
+
+    <div id="info-detail">
+      <div class="detail-header">
+        <div class="drag-indicator" id="drag-indicator"></div>
+        <button class="close-btn" onclick="closePanel()">×</button>
+        <h2 id="detail-title">Lab Title</h2>
+        <p id="detail-desc">Description</p>
+      </div>
+
+      <div class="detail-content">
+        <div class="info-section">
+          <div class="info-label">Kapasitas</div>
+          <div class="info-value" id="detail-capacity">-</div>
+        </div>
+        <div class="info-section">
+          <div class="info-label">Keunggulan</div>
+          <div id="features-list"></div>
+        </div>
+        <div class="info-section">
+          <div class="info-label">Fasilitas</div>
+          <ul id="facilities-list"></ul>
+        </div>
+      </div>
+    </div>
+
+    <a-scene
+      mindar-image="imageTargetSrc: ./assets/targets.mind; autoStart: false; uiScanning: no;"
+      color-space="sRGB"
+      renderer="colorManagement: true, physicallyCorrectLights"
+      vr-mode-ui="enabled: false"
+      device-orientation-permission-ui="enabled: false"
+    >
+      <a-camera position="0 0 0" look-controls="enabled: false" cursor="fuse: false; rayOrigin: mouse;" raycaster="near: 0.1; far: 10000; objects: .clickable"></a-camera>
+
+      <a-entity mindar-image-target="targetIndex: 0">
+        <a-entity id="map-scaler" scale="1 1 1">
+          <a-entity id="floor-1-wrapper" visible="true">
+            <a-image src="./assets/denah_lt1.png" position="0 0 0" scale="2 1.5 1" material="transparent: true; opacity: 0.95"></a-image>
+
+            <a-plane class="clickable" click-handler data-room="Lab MULMED" position="-0.5 0.35 0.01" scale="0.65 0.45 1" material="color: #8b5cf6; opacity: 0; transparent: true"></a-plane>
+
+            <a-plane class="clickable" click-handler data-room="Lab CSN" position="0.5 0.35 0.01" scale="1.1 0.45 1" material="color: #3b82f6; opacity: 0; transparent: true"></a-plane>
+
+            <a-plane class="clickable" click-handler data-room="Lab GIT" position="-0.35 -0.35 0.01" scale="0.9 0.37 1" material="color: #ec4899; opacity: 0; transparent: true"></a-plane>
+          </a-entity>
+
+          <a-entity id="floor-2-wrapper" visible="false">
+            <a-image src="./assets/denah_lt2.png" position="0 0 0" scale="2 1.5 1" material="transparent: true; opacity: 0.95"></a-image>
+
+            <a-plane click-handler data-room="Lab SE" position="-0.55 0.35 0.01" scale="0.58 0.42 1" material="color: #10b981; opacity: 0; transparent: true"></a-plane>
+
+            <a-plane click-handler data-room="TU Lab" position="-0.05 0.42 0.01" scale="0.4 0.25 1" material="color: #f59e0b; opacity: 0; transparent: true"></a-plane>
+
+            <a-plane click-handler data-room="Lab KERIS" position="0.63 0.35 0.01" scale="0.65 0.42 1" material="color: #06b6d4; opacity: 0; transparent: true"></a-plane>
+
+            <a-plane click-handler data-room="R. Rapat" position="-0.59 -0.3 0.01" scale="0.47 0.35 1" material="color: #64748b; opacity: 0; transparent: true"></a-plane>
+
+            <a-plane click-handler data-room="Lab Besar" position="0.4 -0.3 0.01" scale="1.15 0.35 1" material="color: #a855f7; opacity: 0; transparent: true"></a-plane>
+
+            <a-plane click-handler data-room="IT Mart" position="0.65 -0.45 0.01" scale="0.4 0.3 1" material="color: #ef4444; opacity: 0; transparent: true"></a-plane>
+          </a-entity>
+        </a-entity>
+      </a-entity>
+    </a-scene>
+
+    <script>
+      let isPanelExpanded = false;
+      let startY = 0;
+      let currentY = 0;
+      let isDragging = false;
+      let currentScale = 1;
+
+      function startAR() {
+        document.getElementById("landing-page").style.display = "none";
+        document.getElementById("scan-overlay").style.display = "block";
+        document.getElementById("controls-container").style.display = "flex";
+        document.querySelector("a-scene").systems["mindar-image-system"].start();
+      }
+
+      function changeZoom(delta) {
+        currentScale += delta;
+        if (currentScale < 0.5) currentScale = 0.5;
+        if (currentScale > 3) currentScale = 3;
+
+        const mapScaler = document.getElementById("map-scaler");
+        mapScaler.setAttribute("scale", `${currentScale} ${currentScale} ${currentScale}`);
+      }
+
+      function switchFloor(level) {
+        const f1Wrapper = document.getElementById("floor-1-wrapper");
+        const f2Wrapper = document.getElementById("floor-2-wrapper");
+        const b1 = document.getElementById("btn-L1");
+        const b2 = document.getElementById("btn-L2");
+
+        const f1Planes = f1Wrapper.querySelectorAll("a-plane");
+        const f2Planes = f2Wrapper.querySelectorAll("a-plane");
+
+        if (level === 1) {
+          f1Wrapper.setAttribute("visible", "true");
+          f2Wrapper.setAttribute("visible", "false");
+          b1.classList.add("active");
+          b2.classList.remove("active");
+          f1Planes.forEach((el) => el.classList.add("clickable"));
+          f2Planes.forEach((el) => el.classList.remove("clickable"));
+        } else {
+          f1Wrapper.setAttribute("visible", "false");
+          f2Wrapper.setAttribute("visible", "true");
+          b2.classList.add("active");
+          b1.classList.remove("active");
+          f1Planes.forEach((el) => el.classList.remove("clickable"));
+          f2Planes.forEach((el) => el.classList.add("clickable"));
+        }
+      }
+
+      function closePanel() {
+        const panel = document.getElementById("info-detail");
+        panel.classList.remove("active", "loaded", "expanded");
+        isPanelExpanded = false;
+      }
+
+      // Observer: Geser tombol ke KIRI saat panel aktif
+      const panel = document.getElementById("info-detail");
+      const observer = new MutationObserver(() => {
+        const controls = document.getElementById("controls-container");
+        if (panel.classList.contains("active")) {
+          controls.classList.add("panel-open");
+        } else {
+          controls.classList.remove("panel-open");
+        }
+      });
+      observer.observe(panel, { attributes: true, attributeFilter: ["class"] });
+
+      const dragIndicator = document.getElementById("drag-indicator");
+      dragIndicator.addEventListener("touchstart", (e) => {
+        if (window.innerWidth >= 768) return;
+        isDragging = true;
+        startY = e.touches[0].clientY;
+      });
+      dragIndicator.addEventListener("touchmove", (e) => {
+        if (!isDragging || window.innerWidth >= 768) return;
+        currentY = e.touches[0].clientY;
+        const diff = startY - currentY;
+        if (diff > 50 && !isPanelExpanded) {
+          panel.classList.add("expanded");
+          isPanelExpanded = true;
+        } else if (diff < -50 && isPanelExpanded) {
+          panel.classList.remove("expanded");
+          isPanelExpanded = false;
+        }
+      });
+      dragIndicator.addEventListener("touchend", () => {
+        isDragging = false;
+      });
+    </script>
+  </body>
+</html>
