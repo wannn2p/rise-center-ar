@@ -96,7 +96,7 @@
         overflow: hidden;
         user-select: none;
         -webkit-tap-highlight-color: transparent;
-        touch-action: none;
+        touch-action: none; /* Mencegah zoom browser bawaan */
         color: white;
       }
 
@@ -216,7 +216,26 @@
         text-align: center;
       }
 
-      /* SCANNER GUIDE */
+      /* ERROR UI */
+      #error-overlay {
+        position: fixed;
+        inset: 0;
+        z-index: 1100;
+        background: rgba(0, 0, 0, 0.95);
+        display: none;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        padding: 40px;
+      }
+      .error-icon {
+        font-size: 3rem;
+        color: #ef4444;
+        margin-bottom: 20px;
+      }
+
+      /* SCANNER GUIDE - UPDATED POSITIONING */
       #scan-overlay {
         position: fixed;
         inset: 0;
@@ -293,14 +312,14 @@
         }
       }
 
-      /* UI CONTROLS - IMPROVED VISIBILITY */
+      /* UI CONTROLS - FIXED POSITIONING */
       .control-group {
         position: fixed;
-        bottom: 100px;
+        bottom: 160px; /* Posisi dinaikkan biar gak nabrak teks */
         right: 20px;
         display: flex;
         flex-direction: column;
-        align-items: flex-end; /* Align right */
+        align-items: flex-end;
         gap: 12px;
         z-index: 850;
       }
@@ -311,7 +330,6 @@
         border-radius: 50%;
         color: white;
         font-size: 1.2rem;
-        /* PERBAIKAN 1: Background lebih gelap & border lebih tegas */
         background: rgba(15, 23, 42, 0.95);
         backdrop-filter: blur(4px);
         border: 1px solid rgba(255, 255, 255, 0.3);
@@ -323,13 +341,12 @@
         border: none;
       }
 
-      /* PERBAIKAN 2: Tombol Reset bentuk Kapsul + Teks */
       .pill-btn {
         width: auto !important;
         height: 50px;
         padding: 0 20px;
         border-radius: 30px;
-        display: none; /* Controlled by JS */
+        display: none;
         gap: 10px;
         font-weight: 600;
         font-size: 0.9rem;
@@ -572,6 +589,13 @@
       <button class="btn-start" onclick="startAR()">ENTER EXPERIENCE</button>
     </div>
 
+    <div id="error-overlay">
+      <i class="fa-solid fa-camera-slash error-icon"></i>
+      <h3 style="margin: 0 0 10px 0; font-size: 1.5rem">Kamera Ditolak</h3>
+      <p style="margin: 0 0 20px 0; opacity: 0.8; line-height: 1.5">Aplikasi membutuhkan akses kamera.<br />Izinkan kamera di pengaturan browser.</p>
+      <button class="btn-start" style="font-size: 0.9rem; padding: 10px 25px" onclick="location.reload()">Coba Lagi</button>
+    </div>
+
     <div id="tutorial-overlay">
       <div class="tutorial-card">
         <h2 style="color: var(--accent); margin: 0 0 20px 0">Panduan</h2>
@@ -599,27 +623,18 @@
         <div class="scan-corner br"></div>
         <div class="scan-pulse"></div>
       </div>
-      <div style="position: absolute; bottom: 20%; width: 100%; text-align: center">
-        <div style="color: white; font-weight: 800; font-size: 1rem; margin-bottom: 5px">SCAN AREA</div>
-        <div style="color: #cbd5e1; font-size: 0.85rem">Arahkan kamera ke denah</div>
+      <div style="position: absolute; top: calc(50% + 140px); width: 100%; text-align: center">
+        <div style="color: white; font-weight: 800; font-size: 1rem; margin-bottom: 5px; text-shadow: 0 2px 5px rgba(0, 0, 0, 0.8)">SCAN AREA</div>
+        <div style="color: #e2e8f0; font-size: 0.85rem; text-shadow: 0 2px 5px rgba(0, 0, 0, 0.8)">Arahkan kamera ke logo</div>
       </div>
     </div>
 
     <div class="loading" id="loading"><div class="spinner"></div></div>
 
     <div class="control-group">
-      <button id="help-btn" class="btn-icon float-btn" onclick="openTutorial()">
-        <i class="fa-solid fa-question"></i>
-      </button>
-
-      <button id="reset-view-btn" class="btn-icon float-btn pill-btn" onclick="resetView()">
-        <i class="fa-solid fa-crosshairs"></i>
-        <span>Reset Posisi</span>
-      </button>
-
-      <button id="room-selector-btn" class="btn-icon float-btn" onclick="toggleRoomMenu()">
-        <i class="fa-solid fa-layer-group"></i>
-      </button>
+      <button id="help-btn" class="btn-icon float-btn" onclick="openTutorial()"><i class="fa-solid fa-question"></i></button>
+      <button id="reset-view-btn" class="btn-icon float-btn pill-btn" onclick="resetView()"><i class="fa-solid fa-crosshairs"></i><span>Reset Posisi</span></button>
+      <button id="room-selector-btn" class="btn-icon float-btn" onclick="toggleRoomMenu()"><i class="fa-solid fa-layer-group"></i></button>
     </div>
 
     <div id="bottom-bar">
@@ -688,7 +703,7 @@
 
     <script>
       // ==========================================
-      // SETUP VARIABLES
+      // VARIABLES
       // ==========================================
       const state = { isARActive: false, currentFloor: 1, isMenuOpen: false, transform: { scale: 1.0, rotX: 0, rotY: 0 }, isMobile: /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) };
       state.transform.scale = state.isMobile ? 0.6 : 1.0;
@@ -698,6 +713,7 @@
         overlay: document.getElementById("scan-overlay"),
         loading: document.getElementById("loading"),
         tutorial: document.getElementById("tutorial-overlay"),
+        errorOverlay: document.getElementById("error-overlay"),
         menuOverlay: document.getElementById("room-menu-overlay"),
         infoPanel: document.getElementById("info-detail"),
         bottomBar: document.getElementById("bottom-bar"),
@@ -717,7 +733,7 @@
       };
 
       // ==========================================
-      // CORE FUNCTIONS
+      // AR START
       // ==========================================
       function startAR() {
         const sceneEl = document.querySelector("a-scene");
@@ -727,12 +743,25 @@
         }
         el.loading.style.display = "block";
         el.landing.style.opacity = 0;
+
+        // Error handling
+        sceneEl.addEventListener("arError", (e) => {
+          console.error(e);
+          el.loading.style.display = "none";
+          el.errorOverlay.style.display = "flex";
+        });
+
         setTimeout(() => {
           el.landing.style.display = "none";
           el.overlay.style.display = "block";
-          sceneEl.systems["mindar-image-system"].start();
-          state.isARActive = true;
-          el.loading.style.display = "none";
+          try {
+            sceneEl.systems["mindar-image-system"].start();
+            state.isARActive = true;
+            el.loading.style.display = "none";
+          } catch (e) {
+            el.loading.style.display = "none";
+            el.errorOverlay.style.display = "flex";
+          }
         }, 600);
       }
 
@@ -749,9 +778,6 @@
         updateTransform();
       }
 
-      // ==========================================
-      // TUTORIAL LOGIC
-      // ==========================================
       function openTutorial() {
         el.tutorial.classList.add("active");
         setUIState(false);
@@ -801,7 +827,7 @@
       });
 
       // ==========================================
-      // UI LOGIC
+      // SEARCH & UI
       // ==========================================
       function toggleRoomMenu() {
         state.isMenuOpen = !state.isMenuOpen;
@@ -820,10 +846,19 @@
         const grid = el.roomGrid;
         grid.innerHTML = "";
         let foundCount = 0;
+        const lowerFilter = filterText.toLowerCase();
+
         Object.keys(roomData).forEach((key) => {
           const r = roomData[key];
           const matchFloor = r.floor === state.currentFloor;
-          const matchSearch = key.toLowerCase().includes(filterText.toLowerCase()) || r.title.toLowerCase().includes(filterText.toLowerCase());
+
+          let matchStaff = false;
+          if (r.staff && r.staff.length > 0) {
+            matchStaff = r.staff.some((person) => person.name.toLowerCase().includes(lowerFilter));
+          }
+
+          const matchSearch = key.toLowerCase().includes(lowerFilter) || r.title.toLowerCase().includes(lowerFilter) || matchStaff;
+
           const shouldShow = filterText.length > 0 ? matchSearch : matchFloor && matchSearch;
 
           if (shouldShow) {
@@ -832,12 +867,19 @@
             card.className = "room-card";
             card.style.setProperty("--room-color", r.color);
             card.onclick = () => selectRoom(key);
+
+            let extraInfo = "";
+            if (filterText.length > 0) {
+              if (r.floor !== state.currentFloor) extraInfo += `<span style="font-size:0.65rem; opacity:0.7; border:1px solid #fff; padding:0 4px; border-radius:4px; margin-left:5px">Lt ${r.floor}</span>`;
+              if (matchStaff) extraInfo += `<span style="font-size:0.65rem; background:rgba(255,255,255,0.2); padding:0 4px; border-radius:4px; margin-left:5px">Dosen Ditemukan</span>`;
+            }
+
             card.innerHTML = `
               <div class="room-icon-box"><i class="fa-solid ${r.icon}"></i></div>
               <div style="flex:1">
-                <div style="font-weight:bold; font-size:0.95rem; color:white; display:flex; justify-content:space-between">
-                  ${key} 
-                  ${filterText.length > 0 ? `<span style="font-size:0.65rem; opacity:0.5; border:1px solid #fff; padding:0 4px; border-radius:4px">Lt ${r.floor}</span>` : ""}
+                <div style="font-weight:bold; font-size:0.95rem; color:white; display:flex; justify-content:space-between; align-items:center;">
+                  <span>${key}</span>
+                  <div>${extraInfo}</div>
                 </div>
                 <div style="font-size:0.75rem; color:${r.color}; margin-top:2px">${r.title}</div>
               </div>
