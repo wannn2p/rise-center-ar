@@ -7,285 +7,216 @@
 
     <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.2/dist/mindar-image-aframe.prod.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/hammer.js/2.0.8/hammer.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;800&display=swap" rel="stylesheet" />
 
     <script>
-      // --- DATA RUANGAN  ---
-      // ==========================================
-      // 1. DATABASE
-      // ==========================================
       const roomData = {
-        "Lab MULMED": {
-          title: "Integrated Creative Studio",
-          desc: "Laboratorium produksi konten digital berbasis industri. Dilengkapi ekosistem end-to-end untuk rendering grafis, broadcasting, dan desain antarmuka modern.",
-          features: ["4K Broadcasting", "Motion Capture", "UI/UX Research"],
-          capacity: "40 Workstations",
-          facilities: ["Mac Studio M2", "Green Screen", "Audio Booth"],
+        "Lab Multimedia": {
+          title: "Creative Immersive Studio",
+          desc: "Pusat produksi konten digital end-to-end. Rendering grafis, Motion Capture industri, dan riset UI/UX.",
           color: "#8b5cf6",
+          icon: "fa-film",
+          floor: 1,
+          staff: [],
         },
         "Lab CSN": {
-          title: "Network & Cybersecurity Hub",
-          desc: "Pusat simulasi infrastruktur jaringan global. Fokus riset pada ketahanan siber (Cyber Resilience), Cloud Architecture, dan Network Forensics.",
-          features: ["Cyber Defense", "Cloud Infra", "Ethical Hacking"],
-          capacity: "35 Engineers",
-          facilities: ["Cisco Data Rack", "Server Farm", "Cyber Range"],
+          title: "Computer System & Networking",
+          desc: "Markas simulasi jaringan & sistem komputer. Cloud Security dan pengujian infrastruktur.",
           color: "#3b82f6",
+          icon: "fa-network-wired",
+          floor: 1,
+          staff: [
+            { name: "A Hendri Hendrawan, S.Kom., M.Kom", role: "Kepala Lab", img: "fa-user-tie" },
+            { name: "Yuggo Afrianto, S.T., M.Kom", role: "Dosen Tetap", img: "fa-user" },
+            { name: "Bayu Adhi Prakosa, S.Kom., M.T", role: "Dosen Tetap", img: "fa-user" },
+            { name: "Ritzkal, S.Kom., M.Kom", role: "Dosen Tetap", img: "fa-user" },
+          ],
         },
         "Lab GIT": {
-          title: "Geospatial & Information Tech",
-          desc: "Pusat riset teknologi spasial dan pemetaan digital. Fokus pada pengolahan data geografis, penginderaan jauh, dan analisis wilayah menggunakan drone & satelit.",
-          features: ["GIS Mapping", "Spatial Analysis", "ArcGIS / QGIS"],
-          capacity: "30 Analysts",
-          facilities: ["High-Spec PC", "Drone Mapping", "GPS Geodetic"],
+          title: "Geospatial Information Tech",
+          desc: "Analisis spasial tingkat lanjut. Big Data geografis, pemetaan Drone otonom.",
           color: "#ec4899",
+          icon: "fa-map-location-dot",
+          floor: 1,
+          staff: [
+            { name: "Dr. Erwin Hermawan, S.Si., M.Sc", role: "Kepala Lab", img: "fa-user-tie" },
+            { name: "Sahid Agustian H, S.T., M.Kom", role: "Dosen Tetap", img: "fa-user" },
+            { name: "Iksal Yanuarsyah, S.Hut., M.Sc, PhD", role: "Dosen Tetap", img: "fa-user" },
+            { name: "Fety Fatimah, S.Kom., M.Kom", role: "Dosen Tetap", img: "fa-user-graduate" },
+            { name: "Nurul Kamilah, S.Kom., M.Kom", role: "Dosen Tetap", img: "fa-user-graduate" },
+            { name: "Mohammad Aftaf Muhajir, S.Si., M.Kom", role: "Dosen Tetap", img: "fa-user" },
+          ],
         },
         "Lab SE": {
-          title: "Software Engineering Foundry",
-          desc: "Fasilitas pengembangan perangkat lunak skala enterprise. Menerapkan siklus SDLC modern dengan metodologi Agile, Scrum, dan DevOps Automation.",
-          features: ["DevOps Pipeline", "Agile Mgmt", "Microservices"],
-          capacity: "40 Engineers",
-          facilities: ["Dual-Monitor Rig", "Local Cloud", "Scrum Board"],
+          title: "Software Engineering",
+          desc: "Inkubator software skala masif. DevOps, Microservices, dan otomatisasi CI/CD.",
           color: "#10b981",
-        },
-        "TU Lab": {
-          title: "Laboratory Admin Center",
-          desc: "Sentral pelayanan administratif laboratorium, manajemen aset digital, dan sistem penjadwalan terintegrasi.",
-          features: ["Asset Mgmt", "Scheduling", "Academic Service"],
-          capacity: "Staff Area",
-          facilities: ["Service Desk", "Digital Archive"],
-          color: "#f59e0b",
+          icon: "fa-code",
+          floor: 2,
+          staff: [
+            { name: "Berlina Wulandari, S.T., M.Kom", role: "Kepala Lab", img: "fa-user-tie" },
+            { name: "Safaruddin Hidayat A, S.Kom., M.Kom", role: "Dosen Tetap", img: "fa-user" },
+            { name: "Hersanto Fajri, S.Ds., M.MD", role: "Dosen Tetap", img: "fa-user" },
+            { name: "Fitrah Satrya Fajar K, S.Kom., M.Kom", role: "Dosen Tetap", img: "fa-user" },
+            { name: "Freza Riana, S.Si., M.Si", role: "Dosen Tetap", img: "fa-user-graduate" },
+          ],
         },
         "Lab KERIS": {
-          title: "Artificial Intelligence Center",
-          desc: "Pusat riset kecerdasan buatan tingkat lanjut. Mengolah Big Data, Deep Learning, dan Computer Vision untuk solusi sistem cerdas.",
-          features: ["Deep Learning", "Computer Vision", "Predictive AI"],
-          capacity: "25 Researchers",
-          facilities: ["NVIDIA A100 Cluster", "TensorFlow Env", "Data Server"],
+          title: "Knowledge Eng. & Reliable Sys",
+          desc: "Pusat riset kecerdasan buatan, Sistem Pakar, dan Machine Learning.",
           color: "#06b6d4",
+          icon: "fa-brain",
+          floor: 2,
+          staff: [
+            { name: "Dr. Puspa Eosina, S.Si., M.Kom", role: "Kepala Lab", img: "fa-user-tie" },
+            { name: "Gibhta Fitri Laxmi, M.Kom", role: "Dosen Tetap", img: "fa-user-graduate" },
+            { name: "Andik Eko Kristus P, S.Si., M.T", role: "Dosen Tetap", img: "fa-user" },
+            { name: "Dewi Primasari, S.Si., MM", role: "Dosen Tetap", img: "fa-user-graduate" },
+          ],
         },
-        "Lab Besar": {
-          title: "Grand Auditorium",
-          desc: "Venue multifungsi berkapasitas besar untuk konferensi teknologi, seminar hibrida, dan praktikum massal terpadu.",
-          features: ["Tech Conference", "Mass Practicum", "Hackathon Venue"],
-          capacity: "100+ Attendees",
-          facilities: ["Laser Projector", "Hi-Fi Audio", "Modular Seats"],
-          color: "#a855f7",
-        },
-        "R. Rapat": {
-          title: "Executive Meeting Room",
-          desc: "Ruang diskusi strategis untuk perencanaan proyek riset dan sidang tugas akhir, dilengkapi telekonferensi.",
-          features: ["Thesis Defense", "Project Sprint", "Executive Meeting"],
-          capacity: "20 Seats",
-          facilities: ["Smart Board", "Video Conference"],
-          color: "#64748b",
-        },
-        "IT Mart": {
-          title: "IT Mart & Student Store",
-          desc: "Pusat penyediaan kebutuhan teknis mahasiswa, merchandise resmi, dan logistik ringan untuk mendukung aktivitas perkuliahan.",
-          features: ["Official Merch", "Student Supplies", "Tech Snacks"],
-          capacity: "Public Area",
-          facilities: ["Vending Machine", "Digital Payment", "Lounge Area"],
-          color: "#ef4444",
-        },
+        "TU Lab": { title: "Laboratory Command Center", desc: "Sentral manajemen operasional.", color: "#f59e0b", icon: "fa-gears", floor: 2, staff: [] },
+        "Lab Besar": { title: "Grand Tech Auditorium", desc: "Venue multifungsi masif.", color: "#a855f7", icon: "fa-building-columns", floor: 2, staff: [] },
+        "R. Rapat": { title: "Strategic Meeting Room", desc: "Ruang kolaborasi eksekutif.", color: "#64748b", icon: "fa-handshake", floor: 2, staff: [] },
+        "IT Mart": { title: "Tech Supply & Lounge", desc: "Hub logistik mahasiswa.", color: "#ef4444", icon: "fa-cart-shopping", floor: 2, staff: [] },
       };
-
-      // ==========================================
-      // 2. HITBOX COMPONENT
-      // ==========================================
-      AFRAME.registerComponent("click-handler", {
-        init: function () {
-          const el = this.el;
-          el.addEventListener("mouseenter", () => {
-            // Cek double protection: Hanya ubah cursor kalau kelasnya clickable
-            if (el.classList.contains("clickable")) document.body.style.cursor = "pointer";
-          });
-          el.addEventListener("mouseleave", () => {
-            document.body.style.cursor = "default";
-          });
-          el.addEventListener("click", () => {
-            // SAFETY CHECK: Jangan jalankan kalau tidak punya class clickable
-            if (!el.classList.contains("clickable")) return;
-
-            el.setAttribute("animation", "property: material.opacity; from: 0.5; to: 0; dur: 300; easing: easeOutQuad");
-            const roomKey = el.getAttribute("data-room");
-            if (roomData[roomKey]) showRoomDetail(roomData[roomKey]);
-          });
-        },
-      });
     </script>
 
     <style>
-      /* ==========================================
-         3. STYLING
-         ========================================== */
       :root {
         --accent: #3b82f6;
         --dark: #0f172a;
+        --glass: rgba(15, 23, 42, 0.95);
       }
+
       body {
         margin: 0;
         font-family: "Inter", sans-serif;
         overflow: hidden;
-      }
-      video {
-        z-index: -1 !important;
-      }
-      .a-canvas {
-        z-index: 1 !important;
+        user-select: none;
+        -webkit-tap-highlight-color: transparent;
+        touch-action: none;
+        color: white;
       }
 
-      /* UI Elements */
+      .glass-panel {
+        background: var(--glass);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 20px;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.7);
+      }
+      .btn-icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: none;
+        outline: none;
+        cursor: pointer;
+        transition: 0.2s;
+      }
+
       #landing-page {
         position: fixed;
         inset: 0;
         z-index: 999;
-        background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
+        background: radial-gradient(circle at center, #1e293b 0%, #020617 100%);
         display: flex;
         flex-direction: column;
         align-items: center;
         justify-content: center;
-        color: white;
         transition: opacity 0.5s;
       }
       .brand {
         font-size: 2.5rem;
-        font-weight: 800;
-        letter-spacing: -1px;
+        font-weight: 900;
+        background: linear-gradient(135deg, #60a5fa, #c084fc);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
         margin-bottom: 5px;
+        text-align: center;
       }
       .tagline {
-        opacity: 0.7;
-        font-size: 1rem;
+        color: #94a3b8;
         margin-bottom: 30px;
-      }
-      .btn-start {
-        padding: 15px 40px;
-        border-radius: 50px;
-        background: white;
-        color: #0f172a;
-        border: none;
-        font-weight: bold;
-        font-size: 1rem;
-        cursor: pointer;
-        transition: transform 0.2s;
-      }
-      .btn-start:active {
-        transform: scale(0.95);
-      }
-
-      #controls-container {
-        position: fixed;
-        right: 20px;
-        top: 50%;
-        transform: translateY(-50%);
-        display: none;
-        flex-direction: column;
-        gap: 12px;
-        z-index: 800;
-        transition: opacity 0.3s;
-      }
-      .btn-ctrl {
-        width: 50px;
-        height: 50px;
-        border-radius: 50%;
-        background: rgba(0, 0, 0, 0.6);
-        border: 1px solid rgba(255, 255, 255, 0.2);
-        color: white;
-        font-weight: bold;
-        backdrop-filter: blur(10px);
-        cursor: pointer;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-      }
-      .btn-floor.active {
-        background: var(--accent);
-        border-color: white;
-        box-shadow: 0 0 15px var(--accent);
-      }
-
-      #info-detail {
-        position: fixed;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        background: rgba(15, 23, 42, 0.95);
-        backdrop-filter: blur(20px);
-        border-radius: 24px 24px 0 0;
-        z-index: 900;
-        color: white;
-        transform: translateY(105%);
-        transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
-        max-height: 85vh;
-        display: flex;
-        flex-direction: column;
-        border-top: 1px solid rgba(255, 255, 255, 0.1);
-        box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.6);
-      }
-      #info-detail.active {
-        transform: translateY(0);
-      }
-      .panel-header {
-        padding: 20px 24px;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-      }
-      .close-btn {
-        background: rgba(255, 255, 255, 0.1);
-        border: none;
-        color: white;
-        width: 32px;
-        height: 32px;
-        border-radius: 50%;
-        font-size: 1.2rem;
-        cursor: pointer;
-      }
-      .panel-content {
-        padding: 24px;
-        overflow-y: auto;
-      }
-      h2 {
-        margin: 0 0 5px 0;
-        color: var(--accent);
-        font-size: 1.5rem;
-      }
-      p {
-        font-size: 0.95rem;
-        line-height: 1.6;
-        opacity: 0.9;
-        margin-top: 0;
-      }
-      .meta-group {
-        margin-top: 20px;
-      }
-      .label {
-        font-size: 0.75rem;
-        text-transform: uppercase;
-        opacity: 0.5;
-        font-weight: bold;
-        margin-bottom: 8px;
         letter-spacing: 1px;
-      }
-      .tag {
-        display: inline-block;
-        padding: 4px 12px;
-        background: rgba(255, 255, 255, 0.1);
-        border-radius: 12px;
-        font-size: 0.8rem;
-        margin: 0 6px 6px 0;
-        border: 1px solid rgba(255, 255, 255, 0.05);
-      }
-      ul {
-        padding-left: 20px;
-        margin: 0;
-        opacity: 0.9;
-      }
-      li {
-        margin-bottom: 6px;
         font-size: 0.9rem;
       }
+      .btn-start {
+        padding: 14px 40px;
+        border-radius: 50px;
+        background: white;
+        color: var(--dark);
+        border: none;
+        font-weight: 800;
+        font-size: 1rem;
+        cursor: pointer;
+        box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
+        animation: pulse 2s infinite;
+      }
+      @keyframes pulse {
+        50% {
+          transform: scale(1.05);
+          box-shadow: 0 0 30px rgba(255, 255, 255, 0.4);
+        }
+      }
 
+      /* TUTORIAL */
+      #tutorial-overlay {
+        position: fixed;
+        inset: 0;
+        z-index: 1000;
+        background: rgba(0, 0, 0, 0.9);
+        backdrop-filter: blur(5px);
+        display: none;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 30px;
+        animation: fadeIn 0.3s ease;
+      }
+      #tutorial-overlay.active {
+        display: flex;
+      }
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+        }
+        to {
+          opacity: 1;
+        }
+      }
+
+      .tutorial-card {
+        background: rgba(15, 23, 42, 1);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 20px;
+        padding: 25px;
+        max-width: 400px;
+        width: 100%;
+        text-align: center;
+        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
+      }
+      .tut-step {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        margin-bottom: 15px;
+        text-align: left;
+        background: rgba(255, 255, 255, 0.05);
+        padding: 12px;
+        border-radius: 12px;
+      }
+      .tut-icon {
+        font-size: 1.5rem;
+        color: var(--accent);
+        width: 30px;
+        text-align: center;
+      }
+
+      /* SCANNER GUIDE */
       #scan-overlay {
         position: fixed;
         inset: 0;
@@ -293,27 +224,342 @@
         display: none;
         pointer-events: none;
       }
-      .scan-box {
+      .scan-guide {
         position: absolute;
         top: 50%;
         left: 50%;
         transform: translate(-50%, -50%);
         width: 260px;
         height: 260px;
-        border: 3px solid var(--accent);
-        border-radius: 20px;
-        box-shadow: 0 0 0 100vmax rgba(0, 0, 0, 0.7);
-        animation: breathe 2s infinite;
       }
-      @keyframes breathe {
+      @media (max-width: 360px) {
+        .scan-guide {
+          width: 220px;
+          height: 220px;
+        }
+      }
+      .scan-corner {
+        position: absolute;
+        width: 40px;
+        height: 40px;
+        border: 4px solid white;
+        opacity: 0.8;
+      }
+      .tl {
+        top: 0;
+        left: 0;
+        border-right: 0;
+        border-bottom: 0;
+        border-radius: 16px 0 0 0;
+      }
+      .tr {
+        top: 0;
+        right: 0;
+        border-left: 0;
+        border-bottom: 0;
+        border-radius: 0 16px 0 0;
+      }
+      .bl {
+        bottom: 0;
+        left: 0;
+        border-right: 0;
+        border-top: 0;
+        border-radius: 0 0 0 16px;
+      }
+      .br {
+        bottom: 0;
+        right: 0;
+        border-left: 0;
+        border-top: 0;
+        border-radius: 0 0 16px 0;
+      }
+      .scan-pulse {
+        position: absolute;
+        inset: 10px;
+        border: 2px solid var(--accent);
+        border-radius: 12px;
+        animation: scanPulse 2s infinite;
+        opacity: 0.3;
+      }
+      @keyframes scanPulse {
+        50% {
+          transform: scale(1);
+          opacity: 0.6;
+        }
         0%,
         100% {
-          transform: translate(-50%, -50%) scale(1);
-          border-color: var(--accent);
+          transform: scale(0.95);
+          opacity: 0.1;
         }
-        50% {
-          transform: translate(-50%, -50%) scale(1.05);
-          border-color: white;
+      }
+
+      /* UI CONTROLS - IMPROVED VISIBILITY */
+      .control-group {
+        position: fixed;
+        bottom: 100px;
+        right: 20px;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end; /* Align right */
+        gap: 12px;
+        z-index: 850;
+      }
+
+      .float-btn {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        color: white;
+        font-size: 1.2rem;
+        /* PERBAIKAN 1: Background lebih gelap & border lebih tegas */
+        background: rgba(15, 23, 42, 0.95);
+        backdrop-filter: blur(4px);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+        display: none;
+      }
+      #room-selector-btn {
+        background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+        border: none;
+      }
+
+      /* PERBAIKAN 2: Tombol Reset bentuk Kapsul + Teks */
+      .pill-btn {
+        width: auto !important;
+        height: 50px;
+        padding: 0 20px;
+        border-radius: 30px;
+        display: none; /* Controlled by JS */
+        gap: 10px;
+        font-weight: 600;
+        font-size: 0.9rem;
+      }
+
+      #bottom-bar {
+        position: fixed;
+        bottom: 30px;
+        left: 50%;
+        transform: translateX(-50%);
+        display: none;
+        gap: 8px;
+        z-index: 800;
+        padding: 6px;
+        border-radius: 16px;
+        background: rgba(15, 23, 42, 0.9);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        width: max-content;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+      }
+      .btn-floor {
+        padding: 8px 20px;
+        border-radius: 12px;
+        background: transparent;
+        border: none;
+        color: #94a3b8;
+        font-weight: 600;
+        font-size: 0.85rem;
+        cursor: pointer;
+      }
+      .btn-floor.active {
+        background: var(--accent);
+        color: white;
+      }
+
+      /* ROOM MENU */
+      #room-menu-overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(5, 7, 15, 0.98);
+        backdrop-filter: blur(10px);
+        display: none;
+        z-index: 950;
+        padding: 70px 20px 20px 20px;
+        flex-direction: column;
+        animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      }
+      #room-menu-overlay.active {
+        display: flex;
+      }
+      @keyframes slideUp {
+        from {
+          transform: translateY(100%);
+          opacity: 0;
+        }
+        to {
+          transform: translateY(0);
+          opacity: 1;
+        }
+      }
+
+      .search-container {
+        position: relative;
+        max-width: 600px;
+        margin: 0 auto 15px auto;
+        width: 100%;
+      }
+      .search-input {
+        width: 100%;
+        padding: 12px 20px 12px 40px;
+        background: rgba(255, 255, 255, 0.08);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 12px;
+        color: white;
+        font-size: 1rem;
+        outline: none;
+        box-sizing: border-box;
+      }
+      .search-icon {
+        position: absolute;
+        left: 14px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #94a3b8;
+      }
+
+      .room-grid-scroll {
+        flex: 1;
+        overflow-y: auto;
+        padding-bottom: 50px;
+      }
+      .room-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 12px;
+        max-width: 800px;
+        margin: 0 auto;
+      }
+      .room-card {
+        background: rgba(30, 41, 59, 0.6);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        border-radius: 12px;
+        padding: 14px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        position: relative;
+        overflow: hidden;
+      }
+      .room-card::before {
+        content: "";
+        position: absolute;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        width: 4px;
+        background: var(--room-color);
+      }
+      .room-icon-box {
+        width: 42px;
+        height: 42px;
+        border-radius: 10px;
+        background: rgba(255, 255, 255, 0.05);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.2rem;
+        color: var(--room-color);
+        flex-shrink: 0;
+      }
+
+      /* INFO PANEL */
+      #info-detail {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        z-index: 960;
+        transform: translateY(110%);
+        transition: transform 0.3s cubic-bezier(0.19, 1, 0.22, 1);
+        max-height: 85vh;
+        display: flex;
+        flex-direction: column;
+      }
+      #info-detail.active {
+        transform: translateY(0);
+      }
+      .panel-content {
+        padding: 20px;
+        overflow-y: auto;
+      }
+
+      .staff-section {
+        margin-top: 20px;
+        padding-top: 15px;
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+      }
+      .staff-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+        gap: 8px;
+        margin-top: 10px;
+      }
+      .staff-card {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        background: rgba(255, 255, 255, 0.03);
+        padding: 8px;
+        border-radius: 10px;
+        border: 1px solid rgba(255, 255, 255, 0.05);
+      }
+      .staff-avatar {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        background: rgba(59, 130, 246, 0.2);
+        color: var(--accent);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.8rem;
+        flex-shrink: 0;
+      }
+      .staff-info h4 {
+        margin: 0;
+        font-size: 0.8rem;
+        font-weight: 600;
+        line-height: 1.2;
+      }
+      .staff-info p {
+        margin: 2px 0 0 0;
+        font-size: 0.65rem;
+        opacity: 0.6;
+        text-transform: uppercase;
+      }
+
+      .menu-close-btn {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.1);
+        color: white;
+        font-size: 1.1rem;
+        z-index: 970;
+      }
+      .loading {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        z-index: 1000;
+        display: none;
+      }
+      .spinner {
+        width: 40px;
+        height: 40px;
+        border: 3px solid rgba(255, 255, 255, 0.1);
+        border-left-color: var(--accent);
+        border-radius: 50%;
+        animation: spin 0.8s linear infinite;
+      }
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
         }
       }
     </style>
@@ -322,190 +568,378 @@
   <body>
     <div id="landing-page">
       <div class="brand">RISE CENTER</div>
-      <div class="tagline">Research & Innovation in Smart Engineering</div>
+      <div class="tagline">Future Engineering Facility</div>
       <button class="btn-start" onclick="startAR()">ENTER EXPERIENCE</button>
     </div>
 
-    <div id="scan-overlay"><div class="scan-box"></div></div>
-
-    <div id="controls-container">
-      <button class="btn-ctrl btn-floor active" id="btn-L1" onclick="switchFloor(1)">L1</button>
-      <button class="btn-ctrl btn-floor" id="btn-L2" onclick="switchFloor(2)">L2</button>
-      <div style="height: 10px"></div>
-      <button class="btn-ctrl" onclick="zoom(0.1)">+</button>
-      <button class="btn-ctrl" onclick="zoom(-0.1)">−</button>
-    </div>x
-
-    <div id="info-detail">
-      <div class="panel-header">
-        <span class="label">Room Detail</span>
-        <button class="close-btn" onclick="closePanel()">×</button>
+    <div id="tutorial-overlay">
+      <div class="tutorial-card">
+        <h2 style="color: var(--accent); margin: 0 0 20px 0">Panduan</h2>
+        <div class="tut-step">
+          <div class="tut-icon"><i class="fa-solid fa-expand"></i></div>
+          <div style="font-size: 0.9rem">Arahkan kamera ke marker logo.</div>
+        </div>
+        <div class="tut-step">
+          <div class="tut-icon"><i class="fa-solid fa-up-down-left-right"></i></div>
+          <div style="font-size: 0.9rem">Geser 1 jari untuk putar. Cubit untuk zoom.</div>
+        </div>
+        <div class="tut-step">
+          <div class="tut-icon"><i class="fa-solid fa-building"></i></div>
+          <div style="font-size: 0.9rem">Tekan menu untuk cari ruangan/dosen.</div>
+        </div>
+        <button class="btn-start" style="padding: 10px 30px; margin-top: 10px" onclick="closeTutorial()">Mengerti</button>
       </div>
+    </div>
+
+    <div id="scan-overlay">
+      <div class="scan-guide">
+        <div class="scan-corner tl"></div>
+        <div class="scan-corner tr"></div>
+        <div class="scan-corner bl"></div>
+        <div class="scan-corner br"></div>
+        <div class="scan-pulse"></div>
+      </div>
+      <div style="position: absolute; bottom: 20%; width: 100%; text-align: center">
+        <div style="color: white; font-weight: 800; font-size: 1rem; margin-bottom: 5px">SCAN AREA</div>
+        <div style="color: #cbd5e1; font-size: 0.85rem">Arahkan kamera ke denah</div>
+      </div>
+    </div>
+
+    <div class="loading" id="loading"><div class="spinner"></div></div>
+
+    <div class="control-group">
+      <button id="help-btn" class="btn-icon float-btn" onclick="openTutorial()">
+        <i class="fa-solid fa-question"></i>
+      </button>
+
+      <button id="reset-view-btn" class="btn-icon float-btn pill-btn" onclick="resetView()">
+        <i class="fa-solid fa-crosshairs"></i>
+        <span>Reset Posisi</span>
+      </button>
+
+      <button id="room-selector-btn" class="btn-icon float-btn" onclick="toggleRoomMenu()">
+        <i class="fa-solid fa-layer-group"></i>
+      </button>
+    </div>
+
+    <div id="bottom-bar">
+      <button class="btn-floor active" id="btn-L1" onclick="switchFloor(1)">Lantai 1</button>
+      <button class="btn-floor" id="btn-L2" onclick="switchFloor(2)">Lantai 2</button>
+    </div>
+
+    <div id="room-menu-overlay">
+      <button class="btn-icon menu-close-btn" onclick="toggleRoomMenu()"><i class="fa-solid fa-xmark"></i></button>
+      <div style="flex-shrink: 0; text-align: center; margin-bottom: 15px">
+        <h2 style="margin: 0 0 15px 0; font-size: 1.4rem">Daftar Ruangan</h2>
+        <div class="search-container">
+          <i class="fa-solid fa-magnifying-glass search-icon"></i>
+          <input type="text" id="search-input" class="search-input" placeholder="Cari dosen atau lab..." onkeyup="filterRooms()" />
+        </div>
+      </div>
+      <div class="room-grid-scroll">
+        <div class="room-grid" id="room-grid"></div>
+        <div id="no-results" style="text-align: center; opacity: 0.5; display: none; padding: 20px">Tidak ditemukan</div>
+      </div>
+    </div>
+
+    <div id="info-detail" class="glass-panel">
+      <div style="text-align: center; padding: 10px 0 0 0">
+        <div style="width: 40px; height: 4px; background: rgba(255, 255, 255, 0.2); border-radius: 2px; margin: 0 auto"></div>
+      </div>
+      <button style="position: absolute; top: 15px; right: 15px; background: none; border: none; color: white; font-size: 1.2rem; cursor: pointer" onclick="closePanel()"><i class="fa-solid fa-xmark"></i></button>
+
       <div class="panel-content">
-        <h2 id="detail-title">Loading...</h2>
-        <p id="detail-desc">...</p>
-        <div class="meta-group">
-          <div class="label">Capacity</div>
-          <div id="detail-capacity">-</div>
+        <div style="display: flex; gap: 12px; align-items: start">
+          <div id="detail-icon-container" class="room-icon-box" style="width: 50px; height: 50px; font-size: 1.6rem">
+            <i id="detail-icon" class="fa-solid fa-cube"></i>
+          </div>
+          <div style="flex: 1">
+            <span id="detail-badge" style="font-size: 0.7rem; padding: 3px 10px; border-radius: 20px; background: rgba(255, 255, 255, 0.1); margin-bottom: 5px; display: inline-block; font-weight: 600">Lantai 1</span>
+            <h3 id="detail-title" style="margin: 0; font-size: 1.2rem; line-height: 1.2; font-weight: 800">Nama Ruangan</h3>
+          </div>
         </div>
-        <div class="meta-group">
-          <div class="label">Key Features</div>
-          <div id="features-list"></div>
-        </div>
-        <div class="meta-group">
-          <div class="label">Facilities</div>
-          <ul id="facilities-list"></ul>
+        <p id="detail-desc" style="line-height: 1.5; opacity: 0.9; margin: 15px 0; color: #cbd5e1; font-size: 0.9rem">Deskripsi...</p>
+
+        <div id="staff-container" class="staff-section" style="display: none">
+          <h4 style="margin: 0 0 10px 0; color: var(--accent); display: flex; align-items: center; gap: 8px; font-size: 0.9rem"><i class="fa-solid fa-users"></i> Tim & Pengajar</h4>
+          <div class="staff-grid" id="staff-grid"></div>
         </div>
       </div>
     </div>
 
     <a-scene
-      mindar-image="imageTargetSrc: ./assets/targets.mind; autoStart: false; uiScanning: no;"
+      mindar-image="imageTargetSrc: ./assets/targets.mind; autoStart: false; uiScanning: no; filterMinCF:0.0001; filterBeta: 0.001;"
       color-space="sRGB"
       renderer="colorManagement: true, physicallyCorrectLights"
       vr-mode-ui="enabled: false"
       device-orientation-permission-ui="enabled: false"
     >
-      <a-camera position="0 0 0" look-controls="enabled: false" cursor="fuse: false; rayOrigin: mouse;" raycaster="near: 0.1; far: 10000; objects: .clickable"></a-camera>
+      <a-camera position="0 0 0" look-controls="enabled: false"></a-camera>
+      <a-light type="ambient" color="#ffffff" intensity="0.6"></a-light>
+      <a-light type="directional" color="#ffffff" intensity="1.5" position="-1 4 2"></a-light>
 
       <a-entity mindar-image-target="targetIndex: 0" id="target">
-        <a-entity id="map-root" scale="1 1 1">
-          <a-entity id="floor1" visible="true" position="0 0 0.1">
-            <a-plane color="#000" opacity="0.6" width="2.2" height="1.6" position="0 0 -0.01"></a-plane>
-            <a-image src="./assets/gambar_denah_lt1.png" width="2" height="1.5"></a-image>
-
-            <a-plane class="clickable" click-handler data-room="Lab MULMED" position="-0.65 0.45 0.01" width="0.6" height="0.5" material="opacity: 0; transparent: true"></a-plane>
-            <a-plane class="clickable" click-handler data-room="Lab CSN" position="0.65 0.45 0.01" width="0.6" height="0.5" material="opacity: 0; transparent: true"></a-plane>
-            <a-plane class="clickable" click-handler data-room="Lab GIT" position="-0.65 -0.4 0.01" width="0.6" height="0.5" material="opacity: 0; transparent: true"></a-plane>
-          </a-entity>
-
-          <a-entity id="floor2" visible="false" position="0 0 0.1" scale="0 0 0">
-            <a-plane color="#000" opacity="0.6" width="2.2" height="1.6" position="0 0 -0.01"></a-plane>
-            <a-image src="./assets/gambar_denah_lt2.png" width="2" height="1.5"></a-image>
-
-            <a-plane class="clickable" click-handler data-room="Lab SE" position="-0.7 0.45 0.01" width="0.5" height="0.5" material="opacity: 0; transparent: true"></a-plane>
-            <a-plane class="clickable" click-handler data-room="TU Lab" position="-0.1 0.45 0.01" width="0.3" height="0.3" material="opacity: 0; transparent: true"></a-plane>
-            <a-plane class="clickable" click-handler data-room="Lab KERIS" position="0.65 0.45 0.01" width="0.6" height="0.5" material="opacity: 0; transparent: true"></a-plane>
-            <a-plane class="clickable" click-handler data-room="Lab Besar" position="0.1 -0.4 0.01" width="0.7" height="0.5" material="opacity: 0; transparent: true"></a-plane>
-            <a-plane class="clickable" click-handler data-room="IT Mart" position="0.7 -0.45 0.01" width="0.4" height="0.4" material="opacity: 0; transparent: true"></a-plane>
-            <a-plane class="clickable" click-handler data-room="R. Rapat" position="-0.7 -0.4 0.01" width="0.5" height="0.5" material="opacity: 0; transparent: true"></a-plane>
-          </a-entity>
+        <a-entity id="map-root" scale="1.0 1.0 1.0" rotation="0 0 0">
+          <a-entity id="floor1" visible="true"><a-gltf-model src="./assets/rise_center_lt1.glb" rotation="90 0 0"></a-gltf-model></a-entity>
+          <a-entity id="floor2" visible="false" scale="0 0 0"><a-gltf-model src="./assets/rise_center_lt2.glb" rotation="90 0 0"></a-gltf-model></a-entity>
         </a-entity>
       </a-entity>
     </a-scene>
 
     <script>
-      // ==========================
-      // LOGIC CONTROLLER (FIXED)
-      // ==========================
-      let scale = 1;
-      let isPanelOpen = false;
-      let isTargetTracked = false;
+      // ==========================================
+      // SETUP VARIABLES
+      // ==========================================
+      const state = { isARActive: false, currentFloor: 1, isMenuOpen: false, transform: { scale: 1.0, rotX: 0, rotY: 0 }, isMobile: /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) };
+      state.transform.scale = state.isMobile ? 0.6 : 1.0;
 
-      const target = document.getElementById("target");
-      const controls = document.getElementById("controls-container");
-      const overlay = document.getElementById("scan-overlay");
+      const el = {
+        landing: document.getElementById("landing-page"),
+        overlay: document.getElementById("scan-overlay"),
+        loading: document.getElementById("loading"),
+        tutorial: document.getElementById("tutorial-overlay"),
+        menuOverlay: document.getElementById("room-menu-overlay"),
+        infoPanel: document.getElementById("info-detail"),
+        bottomBar: document.getElementById("bottom-bar"),
+        mapRoot: document.getElementById("map-root"),
+        target: document.getElementById("target"),
+        searchInput: document.getElementById("search-input"),
+        staffContainer: document.getElementById("staff-container"),
+        staffGrid: document.getElementById("staff-grid"),
+        roomGrid: document.getElementById("room-grid"),
+        btns: {
+          selector: document.getElementById("room-selector-btn"),
+          reset: document.getElementById("reset-view-btn"),
+          help: document.getElementById("help-btn"),
+          floor1: document.getElementById("btn-L1"),
+          floor2: document.getElementById("btn-L2"),
+        },
+      };
 
+      // ==========================================
+      // CORE FUNCTIONS
+      // ==========================================
       function startAR() {
         const sceneEl = document.querySelector("a-scene");
-        const arSystem = sceneEl.systems["mindar-image-system"];
-        if (!arSystem) {
-          alert("Error: System AR belum siap. Refresh halaman.");
+        if (!sceneEl.systems["mindar-image-system"]) {
+          alert("AR Error");
           return;
         }
-
-        document.getElementById("landing-page").style.opacity = 0;
+        el.loading.style.display = "block";
+        el.landing.style.opacity = 0;
         setTimeout(() => {
-          document.getElementById("landing-page").style.display = "none";
-          overlay.style.display = "block";
-          arSystem.start();
-        }, 500);
+          el.landing.style.display = "none";
+          el.overlay.style.display = "block";
+          sceneEl.systems["mindar-image-system"].start();
+          state.isARActive = true;
+          el.loading.style.display = "none";
+        }, 600);
       }
 
-      target.addEventListener("targetFound", () => {
-        isTargetTracked = true;
-        overlay.style.display = "none";
-        if (!isPanelOpen) controls.style.display = "flex";
+      function updateTransform() {
+        if (!el.mapRoot) return;
+        el.mapRoot.setAttribute("rotation", `${state.transform.rotX} ${state.transform.rotY} 0`);
+        el.mapRoot.setAttribute("scale", `${state.transform.scale} ${state.transform.scale} ${state.transform.scale}`);
+      }
+
+      function resetView() {
+        state.transform.rotX = 0;
+        state.transform.rotY = 0;
+        state.transform.scale = state.isMobile ? 0.6 : 1.0;
+        updateTransform();
+      }
+
+      // ==========================================
+      // TUTORIAL LOGIC
+      // ==========================================
+      function openTutorial() {
+        el.tutorial.classList.add("active");
+        setUIState(false);
+      }
+      function closeTutorial() {
+        el.tutorial.classList.remove("active");
+        if (state.isARActive && !state.isMenuOpen) setUIState(true);
+      }
+
+      // ==========================================
+      // GESTURES
+      // ==========================================
+      const hammer = new Hammer(document.body);
+      hammer.get("pinch").set({ enable: true });
+      hammer.get("pan").set({ direction: Hammer.DIRECTION_ALL, threshold: 10 });
+      let startScale = 1;
+
+      function isBlocked(e) {
+        if (!state.isARActive || state.isMenuOpen || el.infoPanel.classList.contains("active") || el.tutorial.classList.contains("active")) return true;
+        return e.target.closest("button") || e.target.closest(".glass-panel");
+      }
+
+      hammer.on("pan", (ev) => {
+        if (isBlocked(ev)) return;
+        const speed = state.isMobile ? 4 : 2;
+        state.transform.rotY += ev.velocityX * speed;
+        state.transform.rotX += ev.velocityY * speed;
+        state.transform.rotX = Math.max(-45, Math.min(45, state.transform.rotX));
+        updateTransform();
       });
 
-      target.addEventListener("targetLost", () => {
-        isTargetTracked = false;
-        overlay.style.display = "block";
-        controls.style.display = "none";
+      hammer.on("pinchstart", (ev) => {
+        startScale = state.transform.scale;
+      });
+      hammer.on("pinch", (ev) => {
+        if (isBlocked(ev)) return;
+        let newScale = startScale * ev.scale;
+        state.transform.scale = Math.min(Math.max(0.1, newScale), 4.0);
+        updateTransform();
       });
 
-      function showRoomDetail(data) {
-        isPanelOpen = true;
-        document.getElementById("detail-title").innerText = data.title;
-        document.getElementById("detail-desc").innerText = data.desc;
-        document.getElementById("detail-capacity").innerText = data.capacity;
-        document.getElementById("features-list").innerHTML = data.features.map((f) => `<span class="tag">${f}</span>`).join("");
-        document.getElementById("facilities-list").innerHTML = data.facilities.map((f) => `<li>${f}</li>`).join("");
+      document.addEventListener("wheel", (e) => {
+        if (isBlocked(e)) return;
+        state.transform.scale += e.deltaY * -0.001;
+        state.transform.scale = Math.min(Math.max(0.1, state.transform.scale), 4.0);
+        updateTransform();
+      });
 
-        const panel = document.getElementById("info-detail");
-        panel.style.setProperty("--accent", data.color);
-        panel.classList.add("active");
-        controls.style.display = "none";
+      // ==========================================
+      // UI LOGIC
+      // ==========================================
+      function toggleRoomMenu() {
+        state.isMenuOpen = !state.isMenuOpen;
+        if (state.isMenuOpen) {
+          el.searchInput.value = "";
+          renderRoomList();
+          el.menuOverlay.classList.add("active");
+          setUIState(false);
+        } else {
+          el.menuOverlay.classList.remove("active");
+          if (el.target.object3D.visible) setUIState(true);
+        }
+      }
+
+      function renderRoomList(filterText = "") {
+        const grid = el.roomGrid;
+        grid.innerHTML = "";
+        let foundCount = 0;
+        Object.keys(roomData).forEach((key) => {
+          const r = roomData[key];
+          const matchFloor = r.floor === state.currentFloor;
+          const matchSearch = key.toLowerCase().includes(filterText.toLowerCase()) || r.title.toLowerCase().includes(filterText.toLowerCase());
+          const shouldShow = filterText.length > 0 ? matchSearch : matchFloor && matchSearch;
+
+          if (shouldShow) {
+            foundCount++;
+            const card = document.createElement("div");
+            card.className = "room-card";
+            card.style.setProperty("--room-color", r.color);
+            card.onclick = () => selectRoom(key);
+            card.innerHTML = `
+              <div class="room-icon-box"><i class="fa-solid ${r.icon}"></i></div>
+              <div style="flex:1">
+                <div style="font-weight:bold; font-size:0.95rem; color:white; display:flex; justify-content:space-between">
+                  ${key} 
+                  ${filterText.length > 0 ? `<span style="font-size:0.65rem; opacity:0.5; border:1px solid #fff; padding:0 4px; border-radius:4px">Lt ${r.floor}</span>` : ""}
+                </div>
+                <div style="font-size:0.75rem; color:${r.color}; margin-top:2px">${r.title}</div>
+              </div>
+            `;
+            grid.appendChild(card);
+          }
+        });
+        document.getElementById("no-results").style.display = foundCount === 0 ? "block" : "none";
+      }
+
+      function filterRooms() {
+        renderRoomList(el.searchInput.value);
+      }
+      function selectRoom(key) {
+        const room = roomData[key];
+        if (room.floor !== state.currentFloor) switchFloor(room.floor);
+        toggleRoomMenu();
+        setTimeout(() => showDetail(key), 300);
+      }
+
+      function showDetail(key) {
+        const data = roomData[key];
+        document.getElementById("detail-icon").className = `fa-solid ${data.icon}`;
+        document.getElementById("detail-icon-container").style.color = data.color;
+        document.getElementById("detail-title").textContent = data.title;
+        document.getElementById("detail-title").style.color = data.color;
+        document.getElementById("detail-desc").textContent = data.desc;
+        document.getElementById("detail-badge").textContent = `Lantai ${data.floor}`;
+        document.getElementById("detail-badge").style.color = data.color;
+        document.getElementById("detail-badge").style.background = `${data.color}22`;
+
+        if (data.staff && data.staff.length > 0) {
+          el.staffContainer.style.display = "block";
+          el.staffGrid.innerHTML = data.staff
+            .map(
+              (person) => `
+            <div class="staff-card">
+              <div class="staff-avatar"><i class="fa-solid ${person.img}"></i></div>
+              <div class="staff-info"><p>${person.role}</p><h4>${person.name}</h4></div>
+            </div>
+          `,
+            )
+            .join("");
+        } else {
+          el.staffContainer.style.display = "none";
+        }
+        el.infoPanel.classList.add("active");
+        setUIState(false);
       }
 
       function closePanel() {
-        isPanelOpen = false;
-        document.getElementById("info-detail").classList.remove("active");
-        if (isTargetTracked) controls.style.display = "flex";
+        el.infoPanel.classList.remove("active");
+        if (el.target.object3D.visible && !state.isMenuOpen) setUIState(true);
       }
 
-      function zoom(d) {
-        scale += d;
-        scale = Math.min(Math.max(0.5, scale), 3);
-        document.getElementById("map-root").setAttribute("scale", `${scale} ${scale} ${scale}`);
-      }
-
-      // ------------------------------------------------------------------
-      // ANTI-GHOST CLICK LOGIC
-      // Saat pindah lantai, kita set SCALE lantai yang mati jadi 0 0 0.
-      // Ini membuat objeknya hilang total dari 'dunia' raycaster.
-      // ------------------------------------------------------------------
       function switchFloor(n) {
+        state.currentFloor = n;
         const f1 = document.getElementById("floor1");
         const f2 = document.getElementById("floor2");
-        const b1 = document.getElementById("btn-L1");
-        const b2 = document.getElementById("btn-L2");
-
-        const toggleClickable = (entity, state) => {
-          entity.querySelectorAll("a-plane").forEach((el) => {
-            if (state) el.classList.add("clickable");
-            else el.classList.remove("clickable");
-          });
-        };
-
         if (n === 1) {
-          // AKTIFKAN L1
           f1.setAttribute("visible", true);
-          f1.setAttribute("scale", "1 1 1"); // Kembalikan ukuran asli
-          toggleClickable(f1, true); // Pasang class clickable
-
-          // MATIKAN L2
+          f1.setAttribute("scale", "1 1 1");
           f2.setAttribute("visible", false);
-          f2.setAttribute("scale", "0 0 0"); // HILANGKAN TOTAL
-          toggleClickable(f2, false); // Cabut class clickable
-
-          b1.classList.add("active");
-          b2.classList.remove("active");
+          f2.setAttribute("scale", "0 0 0");
+          el.btns.floor1.classList.add("active");
+          el.btns.floor2.classList.remove("active");
         } else {
-          // AKTIFKAN L2
           f2.setAttribute("visible", true);
-          f2.setAttribute("scale", "1 1 1"); // Kembalikan ukuran asli
-          toggleClickable(f2, true);
-
-          // MATIKAN L1
+          f2.setAttribute("scale", "1 1 1");
           f1.setAttribute("visible", false);
-          f1.setAttribute("scale", "0 0 0"); // HILANGKAN TOTAL
-          toggleClickable(f1, false);
-
-          b2.classList.add("active");
-          b1.classList.remove("active");
+          f1.setAttribute("scale", "0 0 0");
+          el.btns.floor2.classList.add("active");
+          el.btns.floor1.classList.remove("active");
         }
+        if (state.isMenuOpen && el.searchInput.value === "") renderRoomList();
       }
+
+      function setUIState(visible) {
+        const val = visible ? "flex" : "none";
+        el.bottomBar.style.display = val;
+        el.btns.selector.style.display = val;
+        el.btns.reset.style.display = val;
+        el.btns.help.style.display = val;
+      }
+
+      el.target.addEventListener("targetFound", () => {
+        el.overlay.style.display = "none";
+        setUIState(true);
+        if (!sessionStorage.getItem("tutorial_shown")) {
+          setTimeout(() => openTutorial(), 500);
+          sessionStorage.setItem("tutorial_shown", "true");
+        }
+      });
+      el.target.addEventListener("targetLost", () => {
+        el.overlay.style.display = "block";
+        setUIState(false);
+        closePanel();
+        if (state.isMenuOpen) toggleRoomMenu();
+        closeTutorial();
+      });
+
+      updateTransform();
     </script>
   </body>
 </html>
